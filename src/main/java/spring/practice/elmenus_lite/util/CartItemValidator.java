@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import spring.practice.elmenus_lite.dto.CartItemDto;
 import spring.practice.elmenus_lite.exception.BadRequestException;
-import spring.practice.elmenus_lite.model.MenuItemModel;
-import spring.practice.elmenus_lite.repository.MenuItemRepository;
 import spring.practice.elmenus_lite.statusCode.ErrorMessage;
 
 import java.util.List;
