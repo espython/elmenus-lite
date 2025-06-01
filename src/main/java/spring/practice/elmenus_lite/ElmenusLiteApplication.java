@@ -14,8 +14,5 @@ public class ElmenusLiteApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ElmenusLiteApplication.class, args);
 	}
-	@PostConstruct
-	public void method() {
 
-	}
 }
