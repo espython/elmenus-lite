@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.practice.elmenus_lite.exception.EntityNotFoundException;
 import spring.practice.elmenus_lite.model.CartItemModel;
+import spring.practice.elmenus_lite.model.CartModel;
 import spring.practice.elmenus_lite.service.CartService;
 import spring.practice.elmenus_lite.statusCode.SuccessStatusCode;
 import spring.practice.elmenus_lite.util.ApiResponse;
@@ -22,9 +23,15 @@ public class CartController {
 
     @PutMapping("{id}/items")
     public ResponseEntity<ApiResponse<?>> updateCartItems(@PathVariable("id") Integer cartId, @RequestBody List<CartItemModel> cartItems) {
-        List<CartItemModel> updatedCartItems = cartService.updateCartItems(cartId, cartItems);
-        ApiResponse<List<CartItemModel>> response = new ApiResponse<>(HttpStatus.OK.value(), SuccessStatusCode.CART_ITEMS_UPDATED_SUCCESSFULLY.getMessage(), updatedCartItems);
-        return ResponseEntity.ok().body(response);
+        try {
+            List<CartItemModel> updatedCartItems = cartService.updateCartItems(cartId, cartItems);
+            ApiResponse<List<CartItemModel>> response = new ApiResponse<>(HttpStatus.OK.value(), SuccessStatusCode.CART_ITEMS_UPDATED_SUCCESSFULLY.getMessage(), updatedCartItems);
+            return ResponseEntity.ok().body(response);
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.error(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.error(HttpStatus.BAD_REQUEST, e.getMessage());
+        } 
     }
 
     @PostMapping("{id}/items")
@@ -36,22 +43,43 @@ public class CartController {
                     addedCartItems);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (EntityNotFoundException e) {
-            return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+            return ApiResponse.error(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (Exception e) {
-            return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to add cart items: " + e.getMessage());
+            return ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to add cart items: " + e.getMessage());
         }
     }
 
     @DeleteMapping("{id}/items/{itemId}")
     public ResponseEntity<ApiResponse<?>> deleteCartItem(@PathVariable("id") Integer cartId, @PathVariable("itemId") Integer itemId) {
-        cartService.deleteCartItem(itemId);
-        ApiResponse<Void> response = new ApiResponse<>(HttpStatus.OK.value(), SuccessStatusCode.CART_ITEMS_UPDATED_SUCCESSFULLY.getMessage(), null);
-        return ResponseEntity.ok().body(response);
+        try {
+            cartService.deleteCartItem(itemId);
+            ApiResponse<Void> response = new ApiResponse<>(HttpStatus.OK.value(), SuccessStatusCode.CART_ITEMS_UPDATED_SUCCESSFULLY.getMessage(), null);
+            return ResponseEntity.ok().body(response);
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.error(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
-    private ResponseEntity<ApiResponse<?>> createErrorResponse(HttpStatus status, String message) {
-        return ResponseEntity
-            .status(status)
-                .body(new ApiResponse<>(status.value(), message, Collections.emptyList()));
+    @GetMapping("{id}")
+    public ResponseEntity<ApiResponse<?>> getCart(@PathVariable("id") Integer customerId) {
+        try {
+            CartModel cart = cartService.getCart(customerId);
+            ApiResponse<CartModel> response = new ApiResponse<>(HttpStatus.OK.value(), SuccessStatusCode.CART_ITEMS_UPDATED_SUCCESSFULLY.getMessage(), cart);
+            return ResponseEntity.ok().body(response);
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.error(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
+
+    @GetMapping("customers")
+    public ResponseEntity<ApiResponse<?>> getCartByCustomerId(@RequestParam("customerId") Integer customerId) {
+        try {
+            CartModel cart = cartService.getCart(customerId);
+            ApiResponse<CartModel> response = new ApiResponse<>(HttpStatus.OK.value(), SuccessStatusCode.CART_ITEMS_UPDATED_SUCCESSFULLY.getMessage(), cart);
+            return ResponseEntity.ok().body(response);
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.error(HttpStatus.NOT_FOUND, e.getMessage());
+        } 
+    }
+    
 }
