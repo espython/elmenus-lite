@@ -4,9 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import spring.practice.elmenus_lite.model.CartItemModel;
 
-import java.util.Set;
+import java.util.List;
+
 
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItemModel, Integer> {
-    Set<CartItemModel> findAllByCartId(Integer cartId);
+
+    List<CartItemModel> findAllByIdInAndCartId(List<Integer> itemIds, Integer cartId);
 }
