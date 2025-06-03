@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import spring.practice.elmenus_lite.model.CustomerModel;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<CustomerModel, Long> {
+public interface CustomerRepository extends JpaRepository<CustomerModel, Integer> {
 }
