@@ -6,8 +6,6 @@ import spring.practice.elmenus_lite.model.CartModel;
 
 import java.util.Optional;
 
-import java.util.Optional;
-
 @Repository
 public interface CartRepository extends JpaRepository<CartModel, Integer> {
 	Optional<CartModel> findByCustomerId(Integer customerId);
